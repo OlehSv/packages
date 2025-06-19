@@ -4,6 +4,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+import 'package:google_maps_flutter_platform_interface/src/types/padding.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -48,7 +49,12 @@ void main() {
   test('CameraUpdate.newLatLngBounds', () {
     final LatLngBounds latLngBounds = LatLngBounds(
         northeast: const LatLng(1.0, 2.0), southwest: const LatLng(-2.0, -3.0));
-    const double padding = 1.0;
+    const Padding padding = Padding(
+      bottom: 1.0,
+      left: 1.0,
+      right: 1.0,
+      top: 1.0,
+    );
     final CameraUpdate cameraUpdate =
         CameraUpdate.newLatLngBounds(latLngBounds, padding);
     expect(cameraUpdate.runtimeType, CameraUpdateNewLatLngBounds);
