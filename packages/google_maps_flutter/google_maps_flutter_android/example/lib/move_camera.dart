@@ -90,7 +90,7 @@ class MoveCameraState extends State<MoveCamera> {
                           southwest: const LatLng(-38.483935, 113.248673),
                           northeast: const LatLng(-8.982446, 153.823821),
                         ),
-                        10.0,
+                        const BoundsPadding.all(10.0),
                       ),
                     );
                   },

@@ -6,7 +6,6 @@ import 'dart:ui' show Offset;
 
 import 'package:flutter/foundation.dart';
 
-import 'padding.dart';
 import 'types.dart';
 
 /// The position of the map "camera", the view point from which the world is shown in the map view.

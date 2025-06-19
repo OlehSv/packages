@@ -695,13 +695,22 @@ void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
       final List<Object?> latLngPair = asJsonList(json[1]);
       final List<Object?> latLng1 = asJsonList(latLngPair[0]);
       final List<Object?> latLng2 = asJsonList(latLngPair[1]);
-      final padding = json[2] as double;
+      final gmaps.Padding? padding = switch (asJsonObject(json[2])) {
+        {
+          'bottom': final num bottom,
+          'left': final num left,
+          'right': final num right,
+          'top': final num top,
+        } =>
+          gmaps.Padding(bottom: bottom, left: left, right: right, top: top),
+        _ => null,
+      };
       map.fitBounds(
         gmaps.LatLngBounds(
           gmaps.LatLng(latLng1[0]! as num, latLng1[1]! as num),
           gmaps.LatLng(latLng2[0]! as num, latLng2[1]! as num),
         ),
-        padding.toJS,
+        padding,
       );
     case 'scrollBy':
       map.panBy(json[1]! as num, json[2]! as num);
