@@ -26,6 +26,7 @@ export 'maps_object.dart';
 export 'maps_object_updates.dart';
 export 'marker.dart';
 export 'marker_updates.dart';
+export 'padding.dart';
 export 'pattern_item.dart';
 export 'polygon.dart';
 export 'polygon_updates.dart';
