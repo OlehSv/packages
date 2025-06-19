@@ -989,7 +989,10 @@ void main() {
     final LatLngBounds latLng = LatLngBounds(
         northeast: const LatLng(10.0, 20.0),
         southwest: const LatLng(9.0, 21.0));
-    final CameraUpdate update = CameraUpdate.newLatLngBounds(latLng, 1.0);
+    final CameraUpdate update = CameraUpdate.newLatLngBounds(
+      latLng,
+      const BoundsPadding.all(1.0),
+    );
     await maps.moveCamera(update, mapId: mapId);
 
     final VerificationResult verification = verify(api.moveCamera(captureAny));

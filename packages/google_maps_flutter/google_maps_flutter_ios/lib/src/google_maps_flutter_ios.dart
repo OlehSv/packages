@@ -786,9 +786,11 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       case CameraUpdateType.newLatLngBounds:
         update as CameraUpdateNewLatLngBounds;
         return PlatformCameraUpdate(
-            cameraUpdate: PlatformCameraUpdateNewLatLngBounds(
-                bounds: _platformLatLngBoundsFromLatLngBounds(update.bounds)!,
-                padding: update.padding));
+          cameraUpdate: PlatformCameraUpdateNewLatLngBounds(
+            bounds: _platformLatLngBoundsFromLatLngBounds(update.bounds)!,
+            padding: _platformPaddingFromPadding(update.padding),
+          ),
+        );
       case CameraUpdateType.zoomTo:
         update as CameraUpdateZoomTo;
         return PlatformCameraUpdate(
@@ -1273,6 +1275,15 @@ PlatformPatternItem platformPatternItemFromPatternItem(PatternItem item) {
   // switch as needing an update.
   // ignore: dead_code
   return PlatformPatternItem(type: PlatformPatternItemType.dot);
+}
+
+PlatformBoundsPadding _platformPaddingFromPadding(BoundsPadding padding) {
+  return PlatformBoundsPadding(
+    bottom: padding.bottom,
+    left: padding.left,
+    right: padding.right,
+    top: padding.top,
+  );
 }
 
 /// Update specification for a set of [TileOverlay]s.

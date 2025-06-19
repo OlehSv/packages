@@ -557,7 +557,7 @@ void googleMapsTests() {
 
     // TODO(iskakaushik): non-zero padding is needed for some device configurations
     // https://github.com/flutter/flutter/issues/30575
-    const double padding = 0;
+    const BoundsPadding padding = BoundsPadding();
     await mapController
         .moveCamera(CameraUpdate.newLatLngBounds(latLngBounds, padding));
     await tester.pumpAndSettle(const Duration(seconds: 3));
@@ -2025,7 +2025,7 @@ CameraUpdate _getCameraUpdateForType(CameraUpdateType type) {
       CameraUpdate.newCameraPosition(_kTestCameraPosition),
     CameraUpdateType.newLatLng => CameraUpdate.newLatLng(_kTestMapCenter),
     CameraUpdateType.newLatLngBounds =>
-      CameraUpdate.newLatLngBounds(_testCameraBounds, 0),
+      CameraUpdate.newLatLngBounds(_testCameraBounds, const BoundsPadding()),
     CameraUpdateType.newLatLngZoom =>
       CameraUpdate.newLatLngZoom(_kTestMapCenter, _kTestCameraZoomLevel),
     CameraUpdateType.scrollBy => CameraUpdate.scrollBy(10, 10),
