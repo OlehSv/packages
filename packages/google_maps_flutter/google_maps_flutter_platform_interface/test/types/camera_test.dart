@@ -49,12 +49,7 @@ void main() {
   test('CameraUpdate.newLatLngBounds', () {
     final LatLngBounds latLngBounds = LatLngBounds(
         northeast: const LatLng(1.0, 2.0), southwest: const LatLng(-2.0, -3.0));
-    const Padding padding = Padding(
-      bottom: 1.0,
-      left: 1.0,
-      right: 1.0,
-      top: 1.0,
-    );
+    const BoundsPadding padding = BoundsPadding.all(1);
     final CameraUpdate cameraUpdate =
         CameraUpdate.newLatLngBounds(latLngBounds, padding);
     expect(cameraUpdate.runtimeType, CameraUpdateNewLatLngBounds);

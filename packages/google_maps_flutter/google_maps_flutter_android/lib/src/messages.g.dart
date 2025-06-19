@@ -191,7 +191,7 @@ class PlatformCameraUpdateNewLatLngBounds {
 
   PlatformLatLngBounds bounds;
 
-  double padding;
+  PlatformBoundsPadding padding;
 
   Object encode() {
     return <Object?>[
@@ -204,7 +204,7 @@ class PlatformCameraUpdateNewLatLngBounds {
     result as List<Object?>;
     return PlatformCameraUpdateNewLatLngBounds(
       bounds: result[0]! as PlatformLatLngBounds,
-      padding: result[1]! as double,
+      padding: result[1]! as PlatformBoundsPadding,
     );
   }
 }
@@ -1608,6 +1608,43 @@ class PlatformBitmapBytesMap {
   }
 }
 
+/// Pigeon equivalent of [Padding].
+class PlatformBoundsPadding {
+  PlatformBoundsPadding({
+    required this.bottom,
+    required this.left,
+    required this.right,
+    required this.top,
+  });
+
+  double bottom;
+
+  double left;
+
+  double right;
+
+  double top;
+
+  Object encode() {
+    return <Object?>[
+      bottom,
+      left,
+      right,
+      top,
+    ];
+  }
+
+  static PlatformBoundsPadding decode(Object result) {
+    result as List<Object?>;
+    return PlatformBoundsPadding(
+      bottom: result[0]! as double,
+      left: result[1]! as double,
+      right: result[2]! as double,
+      top: result[3]! as double,
+    );
+  }
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -1753,6 +1790,9 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformBitmapBytesMap) {
       buffer.putUint8(174);
       writeValue(buffer, value.encode());
+    } else if (value is PlatformBoundsPadding) {
+      buffer.putUint8(175);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -1859,6 +1899,8 @@ class _PigeonCodec extends StandardMessageCodec {
         return PlatformBitmapAssetMap.decode(readValue(buffer)!);
       case 174:
         return PlatformBitmapBytesMap.decode(readValue(buffer)!);
+      case 175:
+        return PlatformBoundsPadding.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }

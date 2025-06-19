@@ -67,7 +67,7 @@ class PlatformCameraUpdateNewLatLng {
 class PlatformCameraUpdateNewLatLngBounds {
   PlatformCameraUpdateNewLatLngBounds(this.bounds, this.padding);
   final PlatformLatLngBounds bounds;
-  final double padding;
+  final PlatformBoundsPadding padding;
 }
 
 /// Pigeon equivalent of NewLatLngZoom
@@ -619,6 +619,20 @@ class PlatformBitmapBytesMap {
   final double imagePixelRatio;
   final double? width;
   final double? height;
+}
+
+/// Pigeon equivalent of [Padding].
+class PlatformBoundsPadding {
+  PlatformBoundsPadding({
+    required this.bottom,
+    required this.left,
+    required this.right,
+    required this.top,
+  });
+  final double bottom;
+  final double left;
+  final double right;
+  final double top;
 }
 
 /// Interface for non-test interactions with the native SDK.

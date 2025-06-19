@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 /// on a Google Map to ensure the bounds fit with respect to padding from
 /// the edges of the map viewport.
 @immutable
-class Padding {
+class BoundsPadding {
   /// Creates a map padding specification for fitBounds operations.
   ///
   /// This padding is used internally when calling fitBounds to ensure that
@@ -17,12 +17,23 @@ class Padding {
   /// - [left]: padding from the left edge of the map (defaults to 0)
   /// - [right]: padding from the right edge of the map (defaults to 0)
   /// - [top]: padding from the top edge of the map (defaults to 0)
-  const Padding({
+  const BoundsPadding({
     this.bottom = 0,
     this.left = 0,
     this.right = 0,
     this.top = 0,
   });
+
+  /// Creates a map padding specification for fitBounds operations with all
+  /// edges having the same padding value.
+  ///
+  /// This is a convenience constructor that sets all padding values to the
+  /// specified [value].
+  const BoundsPadding.all(double value)
+      : bottom = value,
+        left = value,
+        right = value,
+        top = value;
 
   /// The padding value from the bottom edge of the map in logical pixels.
   final double bottom;
