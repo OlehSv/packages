@@ -164,7 +164,10 @@ abstract class CameraUpdate {
   /// geographical bounding box is centered in the map view at the greatest
   /// possible zoom level. A non-zero [padding] insets the bounding box from the
   /// map view's edges. The camera's new tilt and bearing will both be 0.0.
-  static CameraUpdate newLatLngBounds(LatLngBounds bounds, Padding padding) {
+  static CameraUpdate newLatLngBounds(
+    LatLngBounds bounds,
+    BoundsPadding padding,
+  ) {
     return CameraUpdateNewLatLngBounds(bounds, padding);
   }
 
@@ -250,7 +253,7 @@ class CameraUpdateNewLatLngBounds extends CameraUpdate {
   final LatLngBounds bounds;
 
   /// The amount of padding by which the view is inset.
-  final Padding padding;
+  final BoundsPadding padding;
   @override
   Object toJson() => <Object>[
         'newLatLngBounds',

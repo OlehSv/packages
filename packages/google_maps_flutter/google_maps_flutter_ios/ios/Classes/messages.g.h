@@ -106,6 +106,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 @class FGMPlatformBitmapAssetImage;
 @class FGMPlatformBitmapAssetMap;
 @class FGMPlatformBitmapBytesMap;
+@class FGMPlatformBoundsPadding;
 
 /// Pigeon representatation of a CameraPosition.
 @interface FGMPlatformCameraPosition : NSObject
@@ -153,9 +154,10 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 @interface FGMPlatformCameraUpdateNewLatLngBounds : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithBounds:(FGMPlatformLatLngBounds *)bounds padding:(double)padding;
++ (instancetype)makeWithBounds:(FGMPlatformLatLngBounds *)bounds
+                       padding:(FGMPlatformBoundsPadding *)padding;
 @property(nonatomic, strong) FGMPlatformLatLngBounds *bounds;
-@property(nonatomic, assign) double padding;
+@property(nonatomic, strong) FGMPlatformBoundsPadding *padding;
 @end
 
 /// Pigeon equivalent of NewLatLngZoom
@@ -661,6 +663,17 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 @property(nonatomic, assign) double imagePixelRatio;
 @property(nonatomic, strong, nullable) NSNumber *width;
 @property(nonatomic, strong, nullable) NSNumber *height;
+@end
+
+/// Pigeon equivalent of [Padding].
+@interface FGMPlatformBoundsPadding : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithBottom:(double)bottom left:(double)left right:(double)right top:(double)top;
+@property(nonatomic, assign) double bottom;
+@property(nonatomic, assign) double left;
+@property(nonatomic, assign) double right;
+@property(nonatomic, assign) double top;
 @end
 
 /// The codec used by all APIs.

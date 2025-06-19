@@ -239,7 +239,7 @@ class PlatformCameraUpdateNewLatLngBounds {
 
   PlatformLatLngBounds bounds;
 
-  double padding;
+  PlatformBoundsPadding padding;
 
   List<Object?> _toList() {
     return <Object?>[bounds, padding];
@@ -253,7 +253,7 @@ class PlatformCameraUpdateNewLatLngBounds {
     result as List<Object?>;
     return PlatformCameraUpdateNewLatLngBounds(
       bounds: result[0]! as PlatformLatLngBounds,
-      padding: result[1]! as double,
+      padding: result[1]! as PlatformBoundsPadding,
     );
   }
 
@@ -2189,6 +2189,38 @@ class PlatformBitmapBytesMap {
   int get hashCode => Object.hashAll(_toList());
 }
 
+/// Pigeon equivalent of [Padding].
+class PlatformBoundsPadding {
+  PlatformBoundsPadding({
+    required this.bottom,
+    required this.left,
+    required this.right,
+    required this.top,
+  });
+
+  double bottom;
+
+  double left;
+
+  double right;
+
+  double top;
+
+  Object encode() {
+    return <Object?>[bottom, left, right, top];
+  }
+
+  static PlatformBoundsPadding decode(Object result) {
+    result as List<Object?>;
+    return PlatformBoundsPadding(
+      bottom: result[0]! as double,
+      left: result[1]! as double,
+      right: result[2]! as double,
+      top: result[3]! as double,
+    );
+  }
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -2325,7 +2357,7 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformBitmapAssetMap) {
       buffer.putUint8(171);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapBytesMap) {
+    } else if (value is PlatformBoundsPadding) {
       buffer.putUint8(172);
       writeValue(buffer, value.encode());
     } else {
@@ -2428,6 +2460,8 @@ class _PigeonCodec extends StandardMessageCodec {
         return PlatformBitmapAssetMap.decode(readValue(buffer)!);
       case 172:
         return PlatformBitmapBytesMap.decode(readValue(buffer)!);
+      case 172:
+        return PlatformBoundsPadding.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }

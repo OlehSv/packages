@@ -323,6 +323,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
+@interface FGMPlatformBoundsPadding ()
++ (FGMPlatformBoundsPadding *)fromList:(NSArray<id> *)list;
++ (nullable FGMPlatformBoundsPadding *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
 @implementation FGMPlatformCameraPosition
 + (instancetype)makeWithBearing:(double)bearing
                          target:(FGMPlatformLatLng *)target
@@ -422,7 +428,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 
 @implementation FGMPlatformCameraUpdateNewLatLngBounds
-+ (instancetype)makeWithBounds:(FGMPlatformLatLngBounds *)bounds padding:(double)padding {
++ (instancetype)makeWithBounds:(FGMPlatformLatLngBounds *)bounds
+                       padding:(FGMPlatformBoundsPadding *)padding {
   FGMPlatformCameraUpdateNewLatLngBounds *pigeonResult =
       [[FGMPlatformCameraUpdateNewLatLngBounds alloc] init];
   pigeonResult.bounds = bounds;
@@ -433,7 +440,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   FGMPlatformCameraUpdateNewLatLngBounds *pigeonResult =
       [[FGMPlatformCameraUpdateNewLatLngBounds alloc] init];
   pigeonResult.bounds = GetNullableObjectAtIndex(list, 0);
-  pigeonResult.padding = [GetNullableObjectAtIndex(list, 1) doubleValue];
+  pigeonResult.padding = GetNullableObjectAtIndex(list, 1);
   return pigeonResult;
 }
 + (nullable FGMPlatformCameraUpdateNewLatLngBounds *)nullableFromList:(NSArray<id> *)list {
@@ -442,7 +449,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList {
   return @[
     self.bounds ?: [NSNull null],
-    @(self.padding),
+    self.padding ?: [NSNull null],
   ];
 }
 @end
@@ -1640,6 +1647,39 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@implementation FGMPlatformBoundsPadding
++ (instancetype)makeWithBottom:(double)bottom
+                          left:(double)left
+                         right:(double)right
+                           top:(double)top {
+  FGMPlatformBoundsPadding *pigeonResult = [[FGMPlatformBoundsPadding alloc] init];
+  pigeonResult.bottom = bottom;
+  pigeonResult.left = left;
+  pigeonResult.right = right;
+  pigeonResult.top = top;
+  return pigeonResult;
+}
++ (FGMPlatformBoundsPadding *)fromList:(NSArray<id> *)list {
+  FGMPlatformBoundsPadding *pigeonResult = [[FGMPlatformBoundsPadding alloc] init];
+  pigeonResult.bottom = [GetNullableObjectAtIndex(list, 0) doubleValue];
+  pigeonResult.left = [GetNullableObjectAtIndex(list, 1) doubleValue];
+  pigeonResult.right = [GetNullableObjectAtIndex(list, 2) doubleValue];
+  pigeonResult.top = [GetNullableObjectAtIndex(list, 3) doubleValue];
+  return pigeonResult;
+}
++ (nullable FGMPlatformBoundsPadding *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FGMPlatformBoundsPadding fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    @(self.bottom),
+    @(self.left),
+    @(self.right),
+    @(self.top),
+  ];
+}
+@end
+
 @interface FGMMessagesPigeonCodecReader : FlutterStandardReader
 @end
 @implementation FGMMessagesPigeonCodecReader
@@ -1749,6 +1789,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
       return [FGMPlatformBitmapAssetMap fromList:[self readValue]];
     case 172:
       return [FGMPlatformBitmapBytesMap fromList:[self readValue]];
+    case 172:
+      return [FGMPlatformBoundsPadding fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -1892,7 +1934,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   } else if ([value isKindOfClass:[FGMPlatformBitmapAssetMap class]]) {
     [self writeByte:171];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformBitmapBytesMap class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformBoundsPadding class]]) {
     [self writeByte:172];
     [self writeValue:[value toList]];
   } else {

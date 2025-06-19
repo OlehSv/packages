@@ -60,7 +60,7 @@ void main() {
       northeast: const LatLng(1.0, 2.0),
       southwest: const LatLng(-2.0, -3.0),
     );
-    const padding = Padding(bottom: 1.0, left: 1.0, right: 1.0, top: 1.0);
+    const padding = BoundsPadding.all(1);
     final CameraUpdate cameraUpdate = CameraUpdate.newLatLngBounds(
       latLngBounds,
       padding,
