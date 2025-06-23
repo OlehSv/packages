@@ -22,8 +22,8 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    namespace = "io.flutter.plugins.googlemaps"
-    compileSdk = flutter.compileSdkVersion
+    namespace 'io.flutter.plugins.googlemaps'
+    compileSdk = 36
 
     defaultConfig {
         minSdkVersion 24
