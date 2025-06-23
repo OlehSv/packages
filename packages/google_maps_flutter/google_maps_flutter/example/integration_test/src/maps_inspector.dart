@@ -903,8 +903,10 @@ CameraUpdate _getCameraUpdateForType(CameraUpdateType type) {
     CameraUpdateType.newCameraPosition =>
       CameraUpdate.newCameraPosition(_kTestCameraPosition),
     CameraUpdateType.newLatLng => CameraUpdate.newLatLng(_kTestMapCenter),
-    CameraUpdateType.newLatLngBounds =>
-      CameraUpdate.newLatLngBounds(_testCameraBounds, 0),
+    CameraUpdateType.newLatLngBounds => CameraUpdate.newLatLngBounds(
+        _testCameraBounds,
+        const BoundsPadding.all(0),
+      ),
     CameraUpdateType.newLatLngZoom =>
       CameraUpdate.newLatLngZoom(_kTestMapCenter, _kTestCameraZoomLevel),
     CameraUpdateType.scrollBy => CameraUpdate.scrollBy(10, 10),

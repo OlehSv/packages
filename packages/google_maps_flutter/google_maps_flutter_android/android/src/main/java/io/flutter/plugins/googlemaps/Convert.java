@@ -297,9 +297,12 @@ class Convert {
     if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewLatLngBounds) {
       Messages.PlatformCameraUpdateNewLatLngBounds newLatLngBounds =
           (Messages.PlatformCameraUpdateNewLatLngBounds) cameraUpdate;
+      // Note: Padding for newLatLngBounds should be handled by setting the map's padding
+      // directly via googleMap.setPadding() before applying this camera update.
+      // This allows for proper individual edge padding support.
       return CameraUpdateFactory.newLatLngBounds(
           latLngBoundsFromPigeon(newLatLngBounds.getBounds()),
-          (int) (newLatLngBounds.getPadding() * density));
+          0); // Use 0 padding here, actual padding set via map.setPadding()
     }
     if (cameraUpdate instanceof Messages.PlatformCameraUpdateScrollBy) {
       Messages.PlatformCameraUpdateScrollBy scrollBy =

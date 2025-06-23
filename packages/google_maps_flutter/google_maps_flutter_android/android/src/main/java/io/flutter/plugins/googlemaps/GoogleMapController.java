@@ -973,7 +973,7 @@ class GoogleMapController
       throw new FlutterError(
           "GoogleMap uninitialized", "moveCamera called prior to map initialization", null);
     }
-    googleMap.moveCamera(Convert.cameraUpdateFromPigeon(cameraUpdate, density));
+    applyCameraUpdateWithPadding(cameraUpdate, false, null);
   }
 
   @Override
@@ -983,11 +983,63 @@ class GoogleMapController
       throw new FlutterError(
           "GoogleMap uninitialized", "animateCamera called prior to map initialization", null);
     }
-    CameraUpdate update = Convert.cameraUpdateFromPigeon(cameraUpdate, density);
-    if (durationMilliseconds != null) {
-      googleMap.animateCamera(update, durationMilliseconds.intValue(), null);
+    applyCameraUpdateWithPadding(cameraUpdate, true, durationMilliseconds);
+  }
+
+  private void applyCameraUpdateWithPadding(@NonNull Messages.PlatformCameraUpdate cameraUpdate,
+                                           boolean animate, @Nullable Long durationMilliseconds) {
+    // Handle padding for newLatLngBounds camera updates by setting the map's padding temporarily
+    Object update = cameraUpdate.getCameraUpdate();
+    boolean hasBoundsPadding = false;
+    
+    if (update instanceof Messages.PlatformCameraUpdateNewLatLngBounds) {
+      Messages.PlatformCameraUpdateNewLatLngBounds boundsUpdate = 
+          (Messages.PlatformCameraUpdateNewLatLngBounds) update;
+      Messages.PlatformBoundsPadding padding = boundsUpdate.getPadding();
+      
+      // Set the temporary bounds padding with individual edge values
+      googleMap.setPadding(
+          (int) (padding.getLeft() * density),    // left
+          (int) (padding.getTop() * density),     // top
+          (int) (padding.getRight() * density),   // right
+          (int) (padding.getBottom() * density)   // bottom
+      );
+      hasBoundsPadding = true;
+    }
+    
+    // Apply the camera update
+    CameraUpdate cameraUpdateConverted = Convert.cameraUpdateFromPigeon(cameraUpdate, density);
+    
+    if (animate) {
+      // For animated updates, reset padding to zero when animation completes
+      GoogleMap.CancelableCallback callback = hasBoundsPadding ? 
+          new GoogleMap.CancelableCallback() {
+            @Override
+            public void onFinish() {
+              // Reset padding to zero when animation completes
+              googleMap.setPadding(0, 0, 0, 0);
+            }
+
+            @Override
+            public void onCancel() {
+              // Also reset padding if animation is cancelled
+              googleMap.setPadding(0, 0, 0, 0);
+            }
+          } : null;
+      
+      if (durationMilliseconds != null) {
+        googleMap.animateCamera(cameraUpdateConverted, durationMilliseconds.intValue(), callback);
+      } else {
+        googleMap.animateCamera(cameraUpdateConverted, callback);
+      }
     } else {
-      googleMap.animateCamera(update);
+      // For immediate updates, apply then reset padding immediately
+      googleMap.moveCamera(cameraUpdateConverted);
+      
+      // Reset padding to zero immediately for non-animated updates
+      if (hasBoundsPadding) {
+        googleMap.setPadding(0, 0, 0, 0);
+      }
     }
   }
 
