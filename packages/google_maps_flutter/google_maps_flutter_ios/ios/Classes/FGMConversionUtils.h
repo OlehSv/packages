@@ -79,10 +79,10 @@ extern NSArray<GMSStrokeStyle *> *FGMGetStrokeStylesFromPatterns(
 extern NSArray<NSNumber *> *FGMGetSpanLengthsFromPatterns(
     NSArray<FGMPlatformPatternItem *> *patterns);
 
-/// Legacy conversion utils for heatmaps, which are still using a JSON
-/// representation instead of structured Pigeon data.
-// TODO(stuartmorgan): Remove this once heatmaps are migrated to Pigeon.
-@interface FGMHeatmapConversions : NSObject
+/// Creates a UIEdgeInsets from its Pigeon representation.
+extern UIEdgeInsets FGMGetUIEdgeInsetsForPigeonPadding(FGMPlatformBoundsPadding *padding);
+
+@interface FLTGoogleMapJSONConversions : NSObject
 
 extern NSString *const kHeatmapsToAddKey;
 extern NSString *const kHeatmapIdKey;

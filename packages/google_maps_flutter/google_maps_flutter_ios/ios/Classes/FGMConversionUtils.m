@@ -169,6 +169,10 @@ FGMPlatformGroundOverlay *FGMGetPigeonGroundOverlay(GMSGroundOverlay *groundOver
   }
 }
 
+UIEdgeInsets FGMGetUIEdgeInsetsForPigeonPadding(FGMPlatformBoundsPadding *padding) {
+  return UIEdgeInsetsMake(padding.top, padding.left, padding.bottom, padding.right);
+}
+
 GMSCameraUpdate *FGMGetCameraUpdateForPigeonCameraUpdate(FGMPlatformCameraUpdate *cameraUpdate) {
   // See note in messages.dart for why this is so loosely typed.
   id update = cameraUpdate.cameraUpdate;
@@ -184,7 +188,7 @@ GMSCameraUpdate *FGMGetCameraUpdateForPigeonCameraUpdate(FGMPlatformCameraUpdate
         (FGMPlatformCameraUpdateNewLatLngBounds *)update;
     return
         [GMSCameraUpdate fitBounds:FGMGetCoordinateBoundsForPigeonLatLngBounds(typedUpdate.bounds)
-                       withPadding:typedUpdate.padding];
+                    withEdgeInsets:FGMGetUIEdgeInsetsForPigeonPadding(typedUpdate.padding)];
   } else if ([update isKindOfClass:[FGMPlatformCameraUpdateNewLatLngZoom class]]) {
     FGMPlatformCameraUpdateNewLatLngZoom *typedUpdate =
         (FGMPlatformCameraUpdateNewLatLngZoom *)update;
