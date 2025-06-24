@@ -193,6 +193,8 @@ class GoogleMapController {
   @visibleForTesting
   bool get isInitialized => _googleMap != null;
 
+  late final List<StreamSubscription<Object?>> _mapSubscriptions;
+
   /// Starts the JS Maps SDK into the target [_div] with `rawOptions`.
   ///
   /// (Also initializes the geometry/traffic layers.)
@@ -229,7 +231,7 @@ class GoogleMapController {
     final gmaps.Map map = _createMap(_div, options);
     _googleMap = map;
 
-    _attachMapEvents(map);
+    _mapSubscriptions = _attachMapEvents(map).toList();
     _attachGeometryControllers(map);
 
     _initClustering(_clusterManagers);
@@ -240,24 +242,27 @@ class GoogleMapController {
   }
 
   // Funnels map gmap events into the plugin's stream controller.
-  void _attachMapEvents(gmaps.Map map) {
+
+  Iterable<StreamSubscription<Object?>> _attachMapEvents(gmaps.Map map) sync* {
     map.onTilesloaded.first.then((void _) {
       // Report the map as ready to go the first time the tiles load
       _streamController.add(WebMapReadyEvent(_mapId));
     });
-    map.onClick.listen((gmaps.MapMouseEventOrIconMouseEvent event) {
+    yield map.onClick.listen((gmaps.MapMouseEventOrIconMouseEvent event) {
       assert(event.latLng != null);
       _streamController.add(
         MapTapEvent(_mapId, gmLatLngToLatLng(event.latLng!)),
       );
     });
-    map.onRightclick.listen((gmaps.MapMouseEvent event) {
+    yield map.onRightclick.listen((gmaps.MapMouseEvent event) {
       assert(event.latLng != null);
       _streamController.add(
         MapLongPressEvent(_mapId, gmLatLngToLatLng(event.latLng!)),
       );
     });
-    map.onBoundsChanged.listen((void _) {
+    yield map.onBoundsChanged
+        .throttle(const Duration(milliseconds: 100), trailing: true)
+        .listen((void _) {
       if (!_mapIsMoving) {
         _mapIsMoving = true;
         _streamController.add(CameraMoveStartedEvent(_mapId));
@@ -266,7 +271,7 @@ class GoogleMapController {
         CameraMoveEvent(_mapId, _gmViewportToCameraPosition(map)),
       );
     });
-    map.onIdle.listen((void _) {
+    yield map.onIdle.listen((void _) {
       _mapIsMoving = false;
       _streamController.add(CameraIdleEvent(_mapId));
     });
@@ -578,6 +583,10 @@ class GoogleMapController {
   /// You won't be able to call many of the methods on this controller after
   /// calling `dispose`!
   void dispose() {
+    _cleanUpBitmapConversionCaches();
+    for (final StreamSubscription<Object?> subscription in _mapSubscriptions) {
+      subscription.cancel();
+    }
     _widget = null;
     _googleMap = null;
     _circlesController = null;
