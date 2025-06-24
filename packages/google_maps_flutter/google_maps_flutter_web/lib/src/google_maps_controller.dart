@@ -6,8 +6,8 @@ part of '../google_maps_flutter_web.dart';
 
 /// Type used when passing an override to the _createMap function.
 @visibleForTesting
-typedef DebugCreateMapFunction =
-    gmaps.Map Function(HTMLElement div, gmaps.MapOptions options);
+typedef DebugCreateMapFunction = gmaps.Map Function(
+    HTMLElement div, gmaps.MapOptions options);
 
 /// Type used when passing an override to the _setOptions function.
 @visibleForTesting
@@ -22,18 +22,18 @@ class GoogleMapController {
     required MapWidgetConfiguration widgetConfiguration,
     MapObjects mapObjects = const MapObjects(),
     MapConfiguration mapConfiguration = const MapConfiguration(),
-  }) : _mapId = mapId,
-       _streamController = streamController,
-       _initialCameraPosition = widgetConfiguration.initialCameraPosition,
-       _markers = mapObjects.markers,
-       _polygons = mapObjects.polygons,
-       _polylines = mapObjects.polylines,
-       _circles = mapObjects.circles,
-       _clusterManagers = mapObjects.clusterManagers,
-       _heatmaps = mapObjects.heatmaps,
-       _groundOverlays = mapObjects.groundOverlays,
-       _tileOverlays = mapObjects.tileOverlays,
-       _lastMapConfiguration = mapConfiguration {
+  })  : _mapId = mapId,
+        _streamController = streamController,
+        _initialCameraPosition = widgetConfiguration.initialCameraPosition,
+        _markers = mapObjects.markers,
+        _polygons = mapObjects.polygons,
+        _polylines = mapObjects.polylines,
+        _circles = mapObjects.circles,
+        _clusterManagers = mapObjects.clusterManagers,
+        _heatmaps = mapObjects.heatmaps,
+        _groundOverlays = mapObjects.groundOverlays,
+        _tileOverlays = mapObjects.tileOverlays,
+        _lastMapConfiguration = mapConfiguration {
     _circlesController = CirclesController(stream: _streamController);
     _heatmapsController = HeatmapsController();
     _polygonsController = PolygonsController(stream: _streamController);
@@ -138,11 +138,6 @@ class GoogleMapController {
   TileOverlaysController? _tileOverlaysController;
   GroundOverlaysController? _groundOverlaysController;
 
-  StreamSubscription<void>? _onClickSubscription;
-  StreamSubscription<void>? _onRightClickSubscription;
-  StreamSubscription<void>? _onBoundsChangedSubscription;
-  StreamSubscription<void>? _onIdleSubscription;
-
   // Keeps track if _attachGeometryControllers has been called or not.
   bool _controllersBoundToMap = false;
 
@@ -199,6 +194,8 @@ class GoogleMapController {
   @visibleForTesting
   bool get isInitialized => _googleMap != null;
 
+  late final List<StreamSubscription<Object?>> _mapSubscriptions;
+
   /// Starts the JS Maps SDK into the target [_div] with `rawOptions`.
   ///
   /// (Also initializes the geometry/traffic layers.)
@@ -237,7 +234,7 @@ class GoogleMapController {
     final gmaps.Map map = _createMap(_div, options);
     _googleMap = map;
 
-    _attachMapEvents(map);
+    _mapSubscriptions = _attachMapEvents(map).toList();
     _attachGeometryControllers(map);
 
     _initClustering(_clusterManagers);
@@ -248,16 +245,15 @@ class GoogleMapController {
   }
 
   // Funnels map gmap events into the plugin's stream controller.
-  void _attachMapEvents(gmaps.Map map) {
+
+  Iterable<StreamSubscription<Object?>> _attachMapEvents(gmaps.Map map) sync* {
     map.onTilesloaded.first.then((void _) {
       // Report the map as ready to go the first time the tiles load
       if (!_streamController.isClosed) {
         _streamController.add(WebMapReadyEvent(_mapId));
       }
     });
-    _onClickSubscription = map.onClick.listen((
-      gmaps.MapMouseEventOrIconMouseEvent event,
-    ) {
+    yield map.onClick.listen((gmaps.MapMouseEventOrIconMouseEvent event) {
       assert(event.latLng != null);
       if (!_streamController.isClosed) {
         _streamController.add(
@@ -265,9 +261,7 @@ class GoogleMapController {
         );
       }
     });
-    _onRightClickSubscription = map.onRightclick.listen((
-      gmaps.MapMouseEvent event,
-    ) {
+    yield map.onRightclick.listen((gmaps.MapMouseEvent event) {
       assert(event.latLng != null);
       if (!_streamController.isClosed) {
         _streamController.add(
@@ -275,7 +269,9 @@ class GoogleMapController {
         );
       }
     });
-    _onBoundsChangedSubscription = map.onBoundsChanged.listen((void _) {
+    yield map.onBoundsChanged
+        .throttle(const Duration(milliseconds: 100), trailing: true)
+        .listen((void _) {
       if (!_mapIsMoving) {
         _mapIsMoving = true;
         if (!_streamController.isClosed) {
@@ -288,7 +284,7 @@ class GoogleMapController {
         );
       }
     });
-    _onIdleSubscription = map.onIdle.listen((void _) {
+    yield map.onIdle.listen((void _) {
       _mapIsMoving = false;
       if (!_streamController.isClosed) {
         _streamController.add(CameraIdleEvent(_mapId));
@@ -465,7 +461,7 @@ class GoogleMapController {
 
     final gmaps.LatLngBounds bounds =
         await Future<gmaps.LatLngBounds?>.value(_googleMap!.bounds) ??
-        _nullGmapsLatLngBounds;
+            _nullGmapsLatLngBounds;
 
     return gmLatLngBoundsTolatLngBounds(bounds);
   }
@@ -657,6 +653,11 @@ class GoogleMapController {
   /// You won't be able to call many of the methods on this controller after
   /// calling `dispose`!
   void dispose() {
+    _cleanUpBitmapConversionCaches();
+    for (final StreamSubscription<Object?> subscription in _mapSubscriptions) {
+      subscription.cancel();
+    }
+    _mapSubscriptions = [];
     _widget = null;
     _googleMap = null;
     _circlesController = null;
@@ -667,14 +668,6 @@ class GoogleMapController {
     _clusterManagersController = null;
     _tileOverlaysController = null;
     _groundOverlaysController = null;
-    _onClickSubscription?.cancel();
-    _onClickSubscription = null;
-    _onRightClickSubscription?.cancel();
-    _onRightClickSubscription = null;
-    _onBoundsChangedSubscription?.cancel();
-    _onBoundsChangedSubscription = null;
-    _onIdleSubscription?.cancel();
-    _onIdleSubscription = null;
     _streamController.close();
   }
 }
