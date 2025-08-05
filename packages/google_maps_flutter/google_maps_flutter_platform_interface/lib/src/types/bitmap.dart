@@ -472,6 +472,32 @@ class AssetImageBitmap extends BitmapDescriptor {
   ];
 }
 
+/// A [BitmapDescriptor] from url
+class Icon extends BitmapDescriptor {
+  /// Creates [BitmapDescriptor] from url
+  Icon({
+    required this.url,
+    this.size,
+    this.anchor,
+  }) : super._();
+
+  /// Url of the image
+  final String url;
+
+  /// Size of the image
+  final Size? size;
+
+  /// Anchor of the image
+  final Offset? anchor;
+
+  @override
+  Object toJson() => <String, Object?>{
+        'url': url,
+        'size': size,
+        'anchor': anchor,
+      };
+}
+
 /// Represents a [BitmapDescriptor] base class for map bitmaps.
 ///
 /// See [AssetMapBitmap] and [BytesMapBitmap] for concrete implementations.
