@@ -185,31 +185,28 @@ List<gmaps.MapTypeStyle> _mapStyles(String? mapStyleJson) {
   var styles = <gmaps.MapTypeStyle>[];
   if (mapStyleJson != null) {
     try {
-      styles =
-          (json.decode(
-                    mapStyleJson,
-                    reviver: (Object? key, Object? value) {
-                      if (value is Map &&
-                          _isJsonMapStyle(value as Map<String, Object?>)) {
-                        var stylers = <MapStyler>[];
-                        if (value['stylers'] != null) {
-                          stylers = (value['stylers']! as List<Object?>)
-                              .whereType<Map<String, Object?>>()
-                              .map(MapStyler.fromJson)
-                              .toList();
-                        }
-                        return gmaps.MapTypeStyle()
-                          ..elementType = value['elementType'] as String?
-                          ..featureType = value['featureType'] as String?
-                          ..stylers = stylers;
-                      }
-                      return value;
-                    },
-                  )
-                  as List<Object?>)
-              .where((Object? element) => element != null)
-              .cast<gmaps.MapTypeStyle>()
-              .toList();
+      styles = (json.decode(
+        mapStyleJson,
+        reviver: (Object? key, Object? value) {
+          if (value is Map && _isJsonMapStyle(value as Map<String, Object?>)) {
+            var stylers = <MapStyler>[];
+            if (value['stylers'] != null) {
+              stylers = (value['stylers']! as List<Object?>)
+                  .whereType<Map<String, Object?>>()
+                  .map(MapStyler.fromJson)
+                  .toList();
+            }
+            return gmaps.MapTypeStyle()
+              ..elementType = value['elementType'] as String?
+              ..featureType = value['featureType'] as String?
+              ..stylers = stylers;
+          }
+          return value;
+        },
+      ) as List<Object?>)
+          .where((Object? element) => element != null)
+          .cast<gmaps.MapTypeStyle>()
+          .toList();
       // .toList calls are required so the JS API understands the underlying data structure.
     } on FormatException catch (e) {
       throw MapStyleException(e.message);
@@ -317,18 +314,6 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
   // and the marker.infoWindow.anchor property.
 }
 
-// Attempts to extract a [gmaps.Size] from `iconConfig[sizeIndex]`.
-gmaps.Size? _gmSizeFromIconConfig(List<Object?> iconConfig, int sizeIndex) {
-  gmaps.Size? size;
-  if (iconConfig.length >= sizeIndex + 1) {
-    final rawIconSize = iconConfig[sizeIndex] as List<Object?>?;
-    if (rawIconSize != null) {
-      size = gmaps.Size(rawIconSize[0]! as double, rawIconSize[1]! as double);
-    }
-  }
-  return size;
-}
-
 /// Sets the size of the Google Maps icon.
 void _setIconSize({required Size size, required gmaps.Icon icon}) {
   final gmapsSize = gmaps.Size(size.width, size.height);
@@ -428,67 +413,38 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
   BitmapDescriptor bitmapDescriptor,
   Offset anchor,
 ) async {
-  gmaps.Icon? icon;
+  switch (bitmapDescriptor) {
+    case final MapBitmap mapBitmap:
+      final String url = urlFromMapBitmap(mapBitmap);
+      final gmaps.Icon icon = gmaps.Icon()..url = url;
 
-  if (bitmapDescriptor is MapBitmap) {
-    final String url = urlFromMapBitmap(bitmapDescriptor);
-
-    icon = gmaps.Icon()..url = url;
-
-    switch (bitmapDescriptor.bitmapScaling) {
-      case MapBitmapScaling.auto:
-        final Size? size = await _getBitmapSize(bitmapDescriptor, url);
-        if (size != null) {
-          _setIconSize(size: size, icon: icon);
-          _setIconAnchor(size: size, anchor: anchor, icon: icon);
-        }
-      case MapBitmapScaling.none:
-        break;
-    }
-    return icon;
+      switch (mapBitmap.bitmapScaling) {
+        case MapBitmapScaling.auto:
+          final Size? size = await _getBitmapSize(mapBitmap, url);
+          if (size != null) {
+            _setIconSize(size: size, icon: icon);
+            _setIconAnchor(size: size, anchor: anchor, icon: icon);
+          }
+        case MapBitmapScaling.none:
+          break;
+      }
+      return icon;
+    case final Icon icon:
+      return gmaps.Icon(
+        url: icon.url,
+        size: icon.size != null
+            ? gmaps.Size(
+                icon.size!.width,
+                icon.size!.height,
+              )
+            : null,
+        anchor: icon.anchor != null
+            ? gmaps.Point(icon.anchor!.dx, icon.anchor!.dy)
+            : null,
+      );
+    default:
+      return null;
   }
-
-  // The following code is for the deprecated BitmapDescriptor.fromBytes
-  // and BitmapDescriptor.fromAssetImage.
-  final iconConfig = bitmapDescriptor.toJson() as List<Object?>;
-  if (iconConfig[0] == 'fromAssetImage') {
-    assert(iconConfig.length >= 2);
-    // iconConfig[2] contains the DPIs of the screen, but that information is
-    // already encoded in the iconConfig[1]
-    icon = gmaps.Icon()
-      ..url = ui_web.assetManager.getAssetUrl(iconConfig[1]! as String);
-
-    final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 3);
-    if (size != null) {
-      icon
-        ..size = size
-        ..scaledSize = size;
-    }
-  } else if (iconConfig[0] == 'fromBytes') {
-    // Grab the bytes, and put them into a blob
-    final bytes = iconConfig[1]! as List<int>;
-    // Create a Blob from bytes, but let the browser figure out the encoding
-    final Blob blob;
-
-    assert(
-      bytes is Uint8List,
-      'The bytes for a BitmapDescriptor icon must be a Uint8List',
-    );
-
-    // TODO(ditman): Improve this conversion
-    // See https://github.com/dart-lang/web/issues/180
-    blob = Blob(<JSUint8Array>[(bytes as Uint8List).toJS].toJS);
-
-    icon = gmaps.Icon()..url = URL.createObjectURL(blob as JSObject);
-
-    final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 2);
-    if (size != null) {
-      icon
-        ..size = size
-        ..scaledSize = size;
-    }
-  }
-  return icon;
 }
 
 /// Computes the options for a new [gmaps.Marker] from an incoming set of options
@@ -561,9 +517,8 @@ gmaps.PolygonOptions _polygonOptionsFromPolygon(
   Polygon polygon,
 ) {
   // Convert all points to GmLatLng
-  final List<gmaps.LatLng> path = polygon.points
-      .map(_latLngToGmLatLng)
-      .toList();
+  final List<gmaps.LatLng> path =
+      polygon.points.map(_latLngToGmLatLng).toList();
 
   final bool isClockwisePolygon = _isPolygonClockwise(path);
 
@@ -630,8 +585,7 @@ List<gmaps.LatLng> _ensureHoleHasReverseWinding(
 bool _isPolygonClockwise(List<gmaps.LatLng> path) {
   var direction = 0.0;
   for (var i = 0; i < path.length; i++) {
-    direction =
-        direction +
+    direction = direction +
         ((path[(i + 1) % path.length].lat - path[i].lat) *
             (path[(i + 1) % path.length].lng + path[i].lng));
   }
@@ -642,9 +596,8 @@ gmaps.PolylineOptions _polylineOptionsFromPolyline(
   gmaps.Map googleMap,
   Polyline polyline,
 ) {
-  final List<gmaps.LatLng> paths = polyline.points
-      .map(_latLngToGmLatLng)
-      .toList();
+  final List<gmaps.LatLng> paths =
+      polyline.points.map(_latLngToGmLatLng).toList();
 
   return gmaps.PolylineOptions()
     ..path = paths.toJS
@@ -718,9 +671,8 @@ void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
       gmaps.LatLng? focusLatLng;
       final double zoomDelta = json[1] as double? ?? 0;
       // Web only supports integer changes...
-      final int newZoomDelta = zoomDelta < 0
-          ? zoomDelta.floor()
-          : zoomDelta.ceil();
+      final int newZoomDelta =
+          zoomDelta < 0 ? zoomDelta.floor() : zoomDelta.ceil();
       if (json.length == 3) {
         final List<Object?> latLng = asJsonList(json[2]);
         // With focus
@@ -754,18 +706,18 @@ void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
 String urlFromMapBitmap(MapBitmap mapBitmap) {
   return switch (mapBitmap) {
     (final BytesMapBitmap bytesMapBitmap) => _bitmapBlobUrlCache.putIfAbsent(
-      bytesMapBitmap.byteData.hashCode,
-      () {
-        final blob = Blob(<JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS);
-        return URL.createObjectURL(blob as JSObject);
-      },
-    ),
+        bytesMapBitmap.byteData.hashCode,
+        () {
+          final blob = Blob(<JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS);
+          return URL.createObjectURL(blob as JSObject);
+        },
+      ),
     (final AssetMapBitmap assetMapBitmap) => ui_web.assetManager.getAssetUrl(
-      assetMapBitmap.assetName,
-    ),
+        assetMapBitmap.assetName,
+      ),
     _ => throw UnimplementedError(
-      'Only BytesMapBitmap and AssetMapBitmap are supported.',
-    ),
+        'Only BytesMapBitmap and AssetMapBitmap are supported.',
+      ),
   };
 }
 
