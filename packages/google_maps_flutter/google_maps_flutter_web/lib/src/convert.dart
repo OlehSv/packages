@@ -405,8 +405,8 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
             : null,
         scaledSize: icon.scaledSize != null
             ? gmaps.Size(
-                icon.size!.width,
-                icon.size!.height,
+                icon.scaledSize!.width,
+                icon.scaledSize!.height,
               )
             : null,
         anchor: icon.anchor != null
