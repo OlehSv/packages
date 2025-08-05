@@ -433,6 +433,7 @@ class IconDescriptor extends BitmapDescriptor {
   IconDescriptor({
     required this.url,
     this.size,
+    this.scaledSize,
     this.anchor,
   }) : super._();
 
@@ -442,6 +443,9 @@ class IconDescriptor extends BitmapDescriptor {
   /// Size of the image
   final Size? size;
 
+  /// Scaled size of the image
+  final Size? scaledSize;
+
   /// Anchor of the image
   final Offset? anchor;
 
@@ -449,6 +453,7 @@ class IconDescriptor extends BitmapDescriptor {
   Object toJson() => <String, Object?>{
         'url': url,
         'size': size,
+        'scaledSize': scaledSize,
         'anchor': anchor,
       };
 }
