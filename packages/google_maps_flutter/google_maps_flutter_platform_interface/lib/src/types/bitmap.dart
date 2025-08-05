@@ -473,9 +473,9 @@ class AssetImageBitmap extends BitmapDescriptor {
 }
 
 /// A [BitmapDescriptor] from url
-class Icon extends BitmapDescriptor {
+class IconDescriptor extends BitmapDescriptor {
   /// Creates [BitmapDescriptor] from url
-  Icon({
+  IconDescriptor({
     required this.url,
     this.size,
     this.anchor,
