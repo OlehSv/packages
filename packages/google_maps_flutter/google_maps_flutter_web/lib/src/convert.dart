@@ -429,7 +429,7 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
           break;
       }
       return icon;
-    case final Icon icon:
+    case final IconDescriptor icon:
       return gmaps.Icon(
         url: icon.url,
         size: icon.size != null
