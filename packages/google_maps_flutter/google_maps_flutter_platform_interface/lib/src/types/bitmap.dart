@@ -4,6 +4,7 @@
 
 import 'dart:async' show Future;
 import 'dart:typed_data' show Uint8List;
+import 'dart:ui';
 
 import 'package:flutter/foundation.dart' show kIsWeb, visibleForTesting;
 import 'package:flutter/material.dart'
@@ -424,6 +425,32 @@ class AssetImageBitmap extends BitmapDescriptor {
         scale,
         if (size != null) <Object>[size!.width, size!.height]
       ];
+}
+
+/// A [BitmapDescriptor] from url
+class Icon extends BitmapDescriptor {
+  /// Creates [BitmapDescriptor] from url
+  Icon({
+    required this.url,
+    this.size,
+    this.anchor,
+  }) : super._();
+
+  /// Url of the image
+  final String url;
+
+  /// Size of the image
+  final Size? size;
+
+  /// Anchor of the image
+  final Offset? anchor;
+
+  @override
+  Object toJson() => <String, Object?>{
+        'url': url,
+        'size': size,
+        'anchor': anchor,
+      };
 }
 
 /// Represents a [BitmapDescriptor] base class for map bitmaps.
