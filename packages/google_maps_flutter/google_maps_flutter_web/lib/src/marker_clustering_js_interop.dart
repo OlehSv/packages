@@ -117,7 +117,7 @@ extension type MarkerClusterer._(JSObject _) implements JSObject {
 
   /// Adds a list of markers to be clustered by the [MarkerClusterer].
   void addMarkers(List<gmaps.Marker>? markers, bool? noDraw) =>
-      _addMarkers(markers?.cast<JSAny>().toJS, noDraw);
+      _addMarkers(markers?.toJS, noDraw);
   @JS('addMarkers')
   external void _addMarkers(JSArray<JSAny>? markers, bool? noDraw);
 
@@ -129,7 +129,7 @@ extension type MarkerClusterer._(JSObject _) implements JSObject {
 
   /// Removes a list of markers from the [MarkerClusterer].
   bool removeMarkers(List<gmaps.Marker>? markers, bool? noDraw) =>
-      _removeMarkers(markers?.cast<JSAny>().toJS, noDraw);
+      _removeMarkers(markers?.toJS, noDraw);
   @JS('removeMarkers')
   external bool _removeMarkers(JSArray<JSAny>? markers, bool? noDraw);
 
