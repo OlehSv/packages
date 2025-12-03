@@ -657,7 +657,7 @@ class GoogleMapController {
     for (final StreamSubscription<Object?> subscription in _mapSubscriptions) {
       subscription.cancel();
     }
-    _mapSubscriptions = [];
+    _mapSubscriptions.clear();
     _widget = null;
     _googleMap = null;
     _circlesController = null;
