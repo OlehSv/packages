@@ -159,9 +159,9 @@ class Heatmap implements MapsObject<Heatmap> {
   /// instance.
   @override
   Heatmap clone() => copyWith(
-    dataParam: List<WeightedLatLng>.of(data),
-    gradientParam: gradient?.clone(),
-  );
+        dataParam: List<WeightedLatLng>.of(data),
+        gradientParam: gradient?.clone(),
+      );
 
   /// Converts this object to something serializable in JSON.
   @override
@@ -293,7 +293,7 @@ class HeatmapGradient {
 
     addIfPresent(
       'colors',
-      colors.map((HeatmapGradientColor e) => e.color.toARGB32()).toList(),
+      colors.map((HeatmapGradientColor e) => e.color.value).toList(),
     );
     addIfPresent(
       'startPoints',

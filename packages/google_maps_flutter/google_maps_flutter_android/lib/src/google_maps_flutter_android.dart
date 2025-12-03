@@ -762,8 +762,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   static PlatformCircle _platformCircleFromCircle(Circle circle) {
     return PlatformCircle(
       consumeTapEvents: circle.consumeTapEvents,
-      fillColor: PlatformColor(argbValue: circle.fillColor.toARGB32()),
-      strokeColor: PlatformColor(argbValue: circle.strokeColor.toARGB32()),
+      fillColor: PlatformColor(argbValue: circle.fillColor.value),
+      strokeColor: PlatformColor(argbValue: circle.strokeColor.value),
       visible: circle.visible,
       strokeWidth: circle.strokeWidth,
       zIndex: circle.zIndex.toDouble(),
@@ -849,12 +849,12 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     }).toList();
     return PlatformPolygon(
       polygonId: polygon.polygonId.value,
-      fillColor: PlatformColor(argbValue: polygon.fillColor.toARGB32()),
+      fillColor: PlatformColor(argbValue: polygon.fillColor.value),
       geodesic: polygon.geodesic,
       consumesTapEvents: polygon.consumeTapEvents,
       points: points,
       holes: holes,
-      strokeColor: PlatformColor(argbValue: polygon.strokeColor.toARGB32()),
+      strokeColor: PlatformColor(argbValue: polygon.strokeColor.value),
       strokeWidth: polygon.strokeWidth,
       zIndex: polygon.zIndex,
       visible: polygon.visible,
@@ -869,7 +869,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     return PlatformPolyline(
       polylineId: polyline.polylineId.value,
       consumesTapEvents: polyline.consumeTapEvents,
-      color: PlatformColor(argbValue: polyline.color.toARGB32()),
+      color: PlatformColor(argbValue: polyline.color.value),
       startCap: platformCapFromCap(polyline.startCap),
       endCap: platformCapFromCap(polyline.endCap),
       geodesic: polyline.geodesic,

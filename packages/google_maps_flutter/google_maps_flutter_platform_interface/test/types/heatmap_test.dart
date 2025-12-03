@@ -276,12 +276,10 @@ void main() {
       const gradient = HeatmapGradient(colors, colorMapSize: colorMapSize);
 
       expect(gradient.toJson(), <String, Object?>{
-        'colors': colors
-            .map((HeatmapGradientColor e) => e.color.toARGB32())
-            .toList(),
-        'startPoints': colors
-            .map((HeatmapGradientColor e) => e.startPoint)
-            .toList(),
+        'colors':
+            colors.map((HeatmapGradientColor e) => e.color.value).toList(),
+        'startPoints':
+            colors.map((HeatmapGradientColor e) => e.startPoint).toList(),
         'colorMapSize': colorMapSize,
       });
     });
