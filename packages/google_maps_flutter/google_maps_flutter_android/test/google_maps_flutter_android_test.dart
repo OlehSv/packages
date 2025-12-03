@@ -1455,29 +1455,27 @@ void main() {
 
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(SystemChannels.platform_views, (
-          MethodCall methodCall,
-        ) async {
-          if (methodCall.method == 'create') {
-            final args = Map<String, dynamic>.from(
-              methodCall.arguments as Map<dynamic, dynamic>,
-            );
-            if (args.containsKey('params')) {
-              final paramsUint8List = args['params'] as Uint8List;
-              final byteData = ByteData.sublistView(paramsUint8List);
-              final creationParams =
-                  MapsApi.pigeonChannelCodec.decodeMessage(byteData)
-                      as PlatformMapViewCreationParams?;
-              if (creationParams != null) {
-                final String? passedMapId =
-                    creationParams.mapConfiguration.mapId;
-                if (passedMapId != null) {
-                  passedMapIdCompleter.complete(passedMapId);
-                }
-              }
+      MethodCall methodCall,
+    ) async {
+      if (methodCall.method == 'create') {
+        final args = Map<String, dynamic>.from(
+          methodCall.arguments as Map<dynamic, dynamic>,
+        );
+        if (args.containsKey('params')) {
+          final paramsUint8List = args['params'] as Uint8List;
+          final byteData = ByteData.sublistView(paramsUint8List);
+          final creationParams = MapsApi.pigeonChannelCodec
+              .decodeMessage(byteData) as PlatformMapViewCreationParams?;
+          if (creationParams != null) {
+            final String? passedMapId = creationParams.mapConfiguration.mapId;
+            if (passedMapId != null) {
+              passedMapIdCompleter.complete(passedMapId);
             }
           }
-          return 0;
-        });
+        }
+      }
+      return 0;
+    });
 
     final maps = GoogleMapsFlutterAndroid();
 
@@ -1489,7 +1487,7 @@ void main() {
           initialCameraPosition: CameraPosition(target: LatLng(0, 0), zoom: 1),
           textDirection: TextDirection.ltr,
         ),
-        mapConfiguration: const MapConfiguration(mapId: cloudMapId),
+        mapConfiguration: const MapConfiguration(cloudMapId: cloudMapId),
       ),
     );
 

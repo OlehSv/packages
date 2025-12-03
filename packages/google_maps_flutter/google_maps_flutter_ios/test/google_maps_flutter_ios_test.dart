@@ -1340,7 +1340,7 @@ void main() {
             ),
             textDirection: TextDirection.ltr,
           ),
-          mapConfiguration: const MapConfiguration(mapId: cloudMapId),
+          mapConfiguration: const MapConfiguration(cloudMapId: cloudMapId),
         ),
       ),
     );

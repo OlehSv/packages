@@ -1788,8 +1788,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     case 171:
       return [FGMPlatformBitmapAssetMap fromList:[self readValue]];
     case 172:
-      return [FGMPlatformBitmapBytesMap fromList:[self readValue]];
-    case 172:
       return [FGMPlatformBoundsPadding fromList:[self readValue]];
     default:
       return [super readValueOfType:type];

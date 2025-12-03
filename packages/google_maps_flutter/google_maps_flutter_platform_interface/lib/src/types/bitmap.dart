@@ -475,12 +475,8 @@ class AssetImageBitmap extends BitmapDescriptor {
 /// A [BitmapDescriptor] from url
 class IconDescriptor extends BitmapDescriptor {
   /// Creates [BitmapDescriptor] from url
-  IconDescriptor({
-    required this.url,
-    this.size,
-    this.scaledSize,
-    this.anchor,
-  }) : super._();
+  IconDescriptor({required this.url, this.size, this.scaledSize, this.anchor})
+    : super._();
 
   /// Url of the image
   final String url;
@@ -496,42 +492,11 @@ class IconDescriptor extends BitmapDescriptor {
 
   @override
   Object toJson() => <String, Object?>{
-        'url': url,
-        'size': size,
-        'scaledSize': scaledSize,
-        'anchor': anchor,
-      };
-}
-
-/// A [BitmapDescriptor] from url
-class IconDescriptor extends BitmapDescriptor {
-  /// Creates [BitmapDescriptor] from url
-  IconDescriptor({
-    required this.url,
-    this.size,
-    this.scaledSize,
-    this.anchor,
-  }) : super._();
-
-  /// Url of the image
-  final String url;
-
-  /// Size of the image
-  final Size? size;
-
-  /// Scaled size of the image
-  final Size? scaledSize;
-
-  /// Anchor of the image
-  final Offset? anchor;
-
-  @override
-  Object toJson() => <String, Object?>{
-        'url': url,
-        'size': size,
-        'scaledSize': scaledSize,
-        'anchor': anchor,
-      };
+    'url': url,
+    'size': size,
+    'scaledSize': scaledSize,
+    'anchor': anchor,
+  };
 }
 
 /// Represents a [BitmapDescriptor] base class for map bitmaps.

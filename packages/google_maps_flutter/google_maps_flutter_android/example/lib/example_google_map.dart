@@ -680,7 +680,7 @@ MapConfiguration _configurationFromMapWidget(ExampleGoogleMap map) {
     indoorViewEnabled: map.indoorViewEnabled,
     trafficEnabled: map.trafficEnabled,
     buildingsEnabled: map.buildingsEnabled,
-    mapId: map.mapId,
+    cloudMapId: map.mapId,
     style: map.style,
   );
 }

@@ -591,20 +591,6 @@ class PlatformBoundsPadding {
   final double top;
 }
 
-/// Pigeon equivalent of [Padding].
-class PlatformBoundsPadding {
-  PlatformBoundsPadding({
-    required this.bottom,
-    required this.left,
-    required this.right,
-    required this.top,
-  });
-  final double bottom;
-  final double left;
-  final double right;
-  final double top;
-}
-
 /// Interface for non-test interactions with the native SDK.
 ///
 /// For test-only state queries, see [MapsInspectorApi].

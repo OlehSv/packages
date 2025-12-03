@@ -2298,38 +2298,6 @@ class PlatformBoundsPadding {
   }
 }
 
-/// Pigeon equivalent of [Padding].
-class PlatformBoundsPadding {
-  PlatformBoundsPadding({
-    required this.bottom,
-    required this.left,
-    required this.right,
-    required this.top,
-  });
-
-  double bottom;
-
-  double left;
-
-  double right;
-
-  double top;
-
-  Object encode() {
-    return <Object?>[bottom, left, right, top];
-  }
-
-  static PlatformBoundsPadding decode(Object result) {
-    result as List<Object?>;
-    return PlatformBoundsPadding(
-      bottom: result[0]! as double,
-      left: result[1]! as double,
-      right: result[2]! as double,
-      top: result[3]! as double,
-    );
-  }
-}
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override

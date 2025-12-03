@@ -1238,7 +1238,7 @@ PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(
     indoorViewEnabled: config.indoorViewEnabled,
     trafficEnabled: config.trafficEnabled,
     buildingsEnabled: config.buildingsEnabled,
-    mapId: config.mapId,
+    mapId: config.cloudMapId,
     style: config.style,
   );
 }

@@ -65,8 +65,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   GoogleMapsFlutterAndroid({
     @visibleForTesting MapsApi Function(int mapId)? apiProvider,
     @visibleForTesting MapsInitializerApi? initializerApi,
-  }) : _apiProvider = apiProvider ?? _productionApiProvider,
-       _initializerApi = initializerApi ?? MapsInitializerApi();
+  })  : _apiProvider = apiProvider ?? _productionApiProvider,
+        _initializerApi = initializerApi ?? MapsInitializerApi();
 
   /// Registers the Android implementation of GoogleMapsFlutterPlatform.
   static void registerWith() {
@@ -150,9 +150,9 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       StreamController<MapEvent<Object?>>.broadcast();
 
   // Returns a filtered view of the events in the _controller, by mapId.
-  Stream<MapEvent<Object?>> _events(int mapId) => _mapEventStreamController
-      .stream
-      .where((MapEvent<Object?> event) => event.mapId == mapId);
+  Stream<MapEvent<Object?>> _events(int mapId) =>
+      _mapEventStreamController.stream
+          .where((MapEvent<Object?> event) => event.mapId == mapId);
 
   @override
   Stream<CameraMoveStartedEvent> onCameraMoveStarted({required int mapId}) {
@@ -564,21 +564,16 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
         widgetConfiguration.initialCameraPosition,
       ),
       mapConfiguration: mapConfiguration,
-      initialMarkers: mapObjects.markers
-          .map(_platformMarkerFromMarker)
-          .toList(),
-      initialPolygons: mapObjects.polygons
-          .map(_platformPolygonFromPolygon)
-          .toList(),
-      initialPolylines: mapObjects.polylines
-          .map(_platformPolylineFromPolyline)
-          .toList(),
-      initialCircles: mapObjects.circles
-          .map(_platformCircleFromCircle)
-          .toList(),
-      initialHeatmaps: mapObjects.heatmaps
-          .map(_platformHeatmapFromHeatmap)
-          .toList(),
+      initialMarkers:
+          mapObjects.markers.map(_platformMarkerFromMarker).toList(),
+      initialPolygons:
+          mapObjects.polygons.map(_platformPolygonFromPolygon).toList(),
+      initialPolylines:
+          mapObjects.polylines.map(_platformPolylineFromPolyline).toList(),
+      initialCircles:
+          mapObjects.circles.map(_platformCircleFromCircle).toList(),
+      initialHeatmaps:
+          mapObjects.heatmaps.map(_platformHeatmapFromHeatmap).toList(),
       initialTileOverlays: mapObjects.tileOverlays
           .map(_platformTileOverlayFromTileOverlay)
           .toList(),
@@ -596,22 +591,22 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
         viewType: viewType,
         surfaceFactory:
             (BuildContext context, PlatformViewController controller) {
-              return AndroidViewSurface(
-                controller: controller as AndroidViewController,
-                gestureRecognizers: widgetConfiguration.gestureRecognizers,
-                hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-              );
-            },
+          return AndroidViewSurface(
+            controller: controller as AndroidViewController,
+            gestureRecognizers: widgetConfiguration.gestureRecognizers,
+            hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+          );
+        },
         onCreatePlatformView: (PlatformViewCreationParams params) {
           final AndroidViewController controller =
               PlatformViewsService.initExpensiveAndroidView(
-                id: params.id,
-                viewType: viewType,
-                layoutDirection: widgetConfiguration.textDirection,
-                creationParams: creationParams,
-                creationParamsCodec: MapsApi.pigeonChannelCodec,
-                onFocus: () => params.onFocusChanged(true),
-              );
+            id: params.id,
+            viewType: viewType,
+            layoutDirection: widgetConfiguration.textDirection,
+            creationParams: creationParams,
+            creationParamsCodec: MapsApi.pigeonChannelCodec,
+            onFocus: () => params.onFocusChanged(true),
+          );
           controller.addOnPlatformViewCreatedListener(
             params.onPlatformViewCreated,
           );
@@ -845,9 +840,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformPolygon _platformPolygonFromPolygon(Polygon polygon) {
-    final List<PlatformLatLng> points = polygon.points
-        .map(_platformLatLngFromLatLng)
-        .toList();
+    final List<PlatformLatLng> points =
+        polygon.points.map(_platformLatLngFromLatLng).toList();
     final List<List<PlatformLatLng>> holes = polygon.holes.map((
       List<LatLng> hole,
     ) {
@@ -868,12 +862,10 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformPolyline _platformPolylineFromPolyline(Polyline polyline) {
-    final List<PlatformLatLng> points = polyline.points
-        .map(_platformLatLngFromLatLng)
-        .toList();
-    final List<PlatformPatternItem> pattern = polyline.patterns
-        .map(platformPatternItemFromPatternItem)
-        .toList();
+    final List<PlatformLatLng> points =
+        polyline.points.map(_platformLatLngFromLatLng).toList();
+    final List<PlatformPatternItem> pattern =
+        polyline.patterns.map(platformPatternItemFromPatternItem).toList();
     return PlatformPolyline(
       polylineId: polyline.polylineId.value,
       consumesTapEvents: polyline.consumeTapEvents,
@@ -1365,7 +1357,7 @@ PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(
     trafficEnabled: config.trafficEnabled,
     buildingsEnabled: config.buildingsEnabled,
     liteModeEnabled: config.liteModeEnabled,
-    mapId: config.mapId,
+    mapId: config.cloudMapId,
     style: config.style,
   );
 }
@@ -1377,8 +1369,8 @@ PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(
   // All of these hard-coded values and structures come from
   // google_maps_flutter_platform_interface/lib/src/types/utils/map_configuration_serialization.dart
   // to support this legacy API that relied on cross-package magic strings.
-  final List<double>? padding = (options['padding'] as List<Object?>?)
-      ?.cast<double>();
+  final List<double>? padding =
+      (options['padding'] as List<Object?>?)?.cast<double>();
   final mapType = options['mapType'] as int?;
   return PlatformMapConfiguration(
     compassEnabled: options['compassEnabled'] as bool?,
@@ -1460,7 +1452,7 @@ PlatformLatLngBounds? _platformLatLngBoundsFromLatLngBoundsJson(
 }
 
 PlatformCameraTargetBounds?
-_platformCameraTargetBoundsFromCameraTargetBoundsJson(Object? targetJson) {
+    _platformCameraTargetBoundsFromCameraTargetBoundsJson(Object? targetJson) {
   if (targetJson == null) {
     return null;
   }
@@ -1479,8 +1471,8 @@ PlatformZoomRange? _platformZoomRangeFromMinMaxZoomPreferenceJson(
     return null;
   }
   // See `MinMaxZoomPreference.toJson`.
-  final List<double?> minMaxZoom = (zoomPrefsJson as List<Object?>)
-      .cast<double?>();
+  final List<double?> minMaxZoom =
+      (zoomPrefsJson as List<Object?>).cast<double?>();
   return PlatformZoomRange(min: minMaxZoom[0], max: minMaxZoom[1]);
 }
 
@@ -1549,7 +1541,7 @@ PlatformBoundsPadding _platformPaddingFromPadding(BoundsPadding padding) {
 class _TileOverlayUpdates extends MapsObjectUpdates<TileOverlay> {
   /// Computes [TileOverlayUpdates] given previous and current [TileOverlay]s.
   _TileOverlayUpdates.from(super.previous, super.current)
-    : super.from(objectName: 'tileOverlay');
+      : super.from(objectName: 'tileOverlay');
 
   /// Set of TileOverlays to be added in this update.
   Set<TileOverlay> get tileOverlaysToAdd => objectsToAdd;
