@@ -26,20 +26,20 @@ final Map<int, String> _bitmapBlobUrlCache = <int, String>{};
 
 // Converts a [Color] into a valid CSS value #RRGGBB.
 String _getCssColor(Color color) {
-  return '#${color.toARGB32().toRadixString(16).padLeft(8, '0').substring(2)}';
+  return '#${color.value.toRadixString(16).padLeft(8, '0').substring(2)}';
 }
 
 // Extracts the opacity from a [Color].
 double _getCssOpacity(Color color) {
-  return color.a;
+  return color.opacity;
 }
 
 // Converts a [Color] into a valid CSS value rgba(R, G, B, A).
 String _getCssColorWithAlpha(Color color) {
-  return 'rgba(${(color.r * 255.0).round().clamp(0, 255)}, '
-      '${(color.g * 255.0).round().clamp(0, 255)}, '
-      '${(color.b * 255.0).round().clamp(0, 255)}, '
-      '${color.a.toStringAsFixed(2)})';
+  return 'rgba(${(color.red * 255.0).round().clamp(0, 255)}, '
+      '${(color.green * 255.0).round().clamp(0, 255)}, '
+      '${(color.blue * 255.0).round().clamp(0, 255)}, '
+      '${color.opacity.toStringAsFixed(2)})';
 }
 
 // Converts options from the plugin into gmaps.MapOptions that can be used by the JS SDK.
