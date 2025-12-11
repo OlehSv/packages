@@ -43,7 +43,7 @@ class MarkersController extends GeometryController {
           markers,
         );
       } else {
-        for (final gmaps.Marker marker in markers) {
+        for (final marker in markers) {
           marker.map = googleMap;
         }
       }
@@ -188,8 +188,7 @@ class MarkersController extends GeometryController {
       }
     }
 
-    for (final MapEntry<MarkerId, MarkerController?> markerController
-        in markersControllers) {
+    for (final markerController in markersControllers) {
       markerController.value?.remove();
       _markerIdToController.remove(markerController.key);
     }

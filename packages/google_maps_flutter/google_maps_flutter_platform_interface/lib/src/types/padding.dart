@@ -30,10 +30,10 @@ class BoundsPadding {
   /// This is a convenience constructor that sets all padding values to the
   /// specified [value].
   const BoundsPadding.all(double value)
-      : bottom = value,
-        left = value,
-        right = value,
-        top = value;
+    : bottom = value,
+      left = value,
+      right = value,
+      top = value;
 
   /// The padding value from the bottom edge of the map in logical pixels.
   final double bottom;
@@ -49,9 +49,9 @@ class BoundsPadding {
 
   /// Converts this object to something serializable in JSON.
   Map<String, double> toJson() => <String, double>{
-        'bottom': bottom,
-        'left': left,
-        'right': right,
-        'top': top,
-      };
+    'bottom': bottom,
+    'left': left,
+    'right': right,
+    'top': top,
+  };
 }

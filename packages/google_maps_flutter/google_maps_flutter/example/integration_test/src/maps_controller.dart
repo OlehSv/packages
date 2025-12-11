@@ -143,7 +143,7 @@ void runTests() {
 
       // TODO(iskakaushik): non-zero padding is needed for some device configurations
       // https://github.com/flutter/flutter/issues/30575
-      const BoundsPadding padding = BoundsPadding.all(0);
+      const padding = BoundsPadding.all(0);
       await mapController.moveCamera(
         CameraUpdate.newLatLngBounds(latLngBounds, padding),
       );

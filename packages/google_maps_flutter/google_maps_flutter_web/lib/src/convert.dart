@@ -416,7 +416,7 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
   switch (bitmapDescriptor) {
     case final MapBitmap mapBitmap:
       final String url = urlFromMapBitmap(mapBitmap);
-      final gmaps.Icon icon = gmaps.Icon()..url = url;
+      final icon = gmaps.Icon()..url = url;
 
       switch (mapBitmap.bitmapScaling) {
         case MapBitmapScaling.auto:
