@@ -82,7 +82,7 @@ extern NSArray<NSNumber *> *FGMGetSpanLengthsFromPatterns(
 /// Creates a UIEdgeInsets from its Pigeon representation.
 extern UIEdgeInsets FGMGetUIEdgeInsetsForPigeonPadding(FGMPlatformBoundsPadding *padding);
 
-@interface FLTGoogleMapJSONConversions : NSObject
+@interface FGMHeatmapConversions : NSObject
 
 extern NSString *const kHeatmapsToAddKey;
 extern NSString *const kHeatmapIdKey;
