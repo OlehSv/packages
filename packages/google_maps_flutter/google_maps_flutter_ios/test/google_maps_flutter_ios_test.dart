@@ -1354,8 +1354,8 @@ void main() {
 }
 
 void _expectColorsEqual(PlatformColor actual, Color expected) {
-  expect(actual.red, expected.r);
-  expect(actual.green, expected.g);
-  expect(actual.blue, expected.b);
-  expect(actual.alpha, expected.a);
+  expect(actual.red, expected.red / 255);
+  expect(actual.green, expected.green / 255);
+  expect(actual.blue, expected.blue / 255);
+  expect(actual.alpha, expected.alpha / 255);
 }
