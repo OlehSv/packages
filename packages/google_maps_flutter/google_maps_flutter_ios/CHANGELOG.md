@@ -1,3 +1,7 @@
+## 2.15.9
+
+* Fixes a runtime crash when sending `PlatformBitmapBytesMap` values by teaching the platform channel codec how to serialize them.
+
 ## 2.15.8
 
 * Replaces internal use of deprecated methods.
